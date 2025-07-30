@@ -1,10 +1,14 @@
 package Base;
 import java.io.FileInputStream;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import io.cucumber.java.After;
@@ -31,13 +35,32 @@ public class PageTestBase {
         String browser = browser_maven!=null ? browser_maven : browser_properties;
 
 
-
+//boolean enableGeolocation = Boolean.parseBoolean(prop.getProperty("enableGeolocation", "false"));
         if(driver == null)
         {
             if(browser.equalsIgnoreCase("chrome"))
             {
                 WebDriverManager.chromedriver().setup();
-                driver = new ChromeDriver();
+                ChromeOptions options = new ChromeOptions();
+              //  if(enableGeolocation){
+
+                    Map<String, Object> prefs = new HashMap<>();
+                    prefs.put("profile.default_content_setting_values.geolocation", 2); // 2 = Block
+                    prefs.put("profile.default_content_setting_values.notifications", 2);
+                    options.setExperimentalOption("prefs", prefs);
+                ChromeDriver driver = new ChromeDriver(options);
+
+                ((ChromeDriver)driver).executeCdpCommand("Browser.grantPermissions",
+                Map.of(
+                        "origin", "https://www.mobil.com",
+                        "permissions", Arrays.asList("geolocation")
+                      //  "setting", "denied"
+                )
+                );
+
+
+               // }
+
                 driver.manage().window().maximize();
 
             }
