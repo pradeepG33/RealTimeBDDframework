@@ -16,7 +16,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class PageTestBase {
     public static WebDriver driver;
-    static Properties prop;
+    public static Properties prop;
 
     public static WebDriver WebDriverManager() {
         try {
